@@ -17,6 +17,7 @@ def main():
 
     clock = pygame.time.Clock()
     started = False
+    score = 0 
 
     paddle_1_rect = pygame.Rect(30, SCREEN_HEIGHT/2 - 50, 7, 100)
     paddle_2_rect = pygame.Rect(SCREEN_WIDTH - 50, SCREEN_HEIGHT/2 - 50, 7, 100)
@@ -64,6 +65,12 @@ def main():
             text = font.render('Press Space to Start', True, COLOR_WHITE)
             text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
             screen.blit(text, text_rect)
+            # Afficher le score même lorsque le jeu n'a pas démarré
+            font = pygame.font.SysFont('Consolas', 24)
+            score_text = font.render(f'Score: {score}', True, COLOR_WHITE)
+            screen.blit(score_text, (10, 10))
+            # Réinitialiser le score lorsque le jeu n'a pas démarré
+            score = 0
         else:
             pygame.draw.rect(screen, COLOR_WHITE, paddle_1_rect)
             pygame.draw.rect(screen, COLOR_WHITE, paddle_2_rect)
@@ -74,12 +81,15 @@ def main():
                 paddle_1_rect.center = (30, SCREEN_HEIGHT / 2)
                 paddle_2_rect.center = (SCREEN_WIDTH - 50, SCREEN_HEIGHT / 2)
                 started = False
+                score = 0
 
             if ball_rect.top <= 0 or ball_rect.bottom >= SCREEN_HEIGHT:
                 ball_accel_y *= -1
 
             if paddle_1_rect.colliderect(ball_rect) or paddle_2_rect.colliderect(ball_rect):
                 ball_accel_x *= -1
+                score += 1 
+                
 
             ball_rect.left += ball_accel_x * clock.get_time()
             ball_rect.top += ball_accel_y * clock.get_time()
@@ -96,6 +106,10 @@ def main():
                 paddle_2_rect.top = 0
             if paddle_2_rect.bottom > SCREEN_HEIGHT:
                 paddle_2_rect.bottom = SCREEN_HEIGHT
+
+        font = pygame.font.SysFont('Consolas', 24)
+        score_text = font.render(f'Score: {score}', True, COLOR_WHITE)
+        screen.blit(score_text, (10, 10))
 
         pygame.display.update()
         clock.tick(60)
